@@ -12,18 +12,17 @@ import (
   "time"
 )
 
-// Commit struct
-type Commit struct {
+type commit struct {
   SHA string
   Date time.Time
   Author string
   Message string
 }
 
-func parseLogLine(line string) Commit {
+func parseLogLine(line string) commit {
   logParts := strings.Split(line, "~")
   timestamp, _ := strconv.ParseInt(logParts[1], 10, 64)
-  return Commit{logParts[0], time.Unix(timestamp, 0), logParts[2], logParts[3]}
+  return commit{logParts[0], time.Unix(timestamp, 0), logParts[2], logParts[3]}
 }
 
 func main () {
