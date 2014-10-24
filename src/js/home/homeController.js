@@ -2,6 +2,21 @@ angular.module('gitStats')
 
 .controller('HomeController', function($scope, commitResource, moment, $interval) {
 
+  // there's a few funky commits in the Linux history dated 1970.
+  function filterWeirdDates(commit) {
+    var date = moment(commit.Date);
+    return date.isAfter('2005-01-01') && date.isBefore(moment());
+  }
+
+  function createResource(commit) {
+    return new commitResource({
+      Date: moment(commit.Date).toDate(),
+      SHA: commit.SHA,
+      Author: commit.Author,
+      Message: commit.Message
+    });
+  }
+
   function commitsByAuthor(commits) {
     return _.chain(commits)
       .groupBy(_.property('Author'))
@@ -38,28 +53,13 @@ angular.module('gitStats')
   commitResource.query().$promise
     .then(function (commits) {
       $scope.commits = _.chain(commits)
-        .filter(function (commit) {
-          var date = moment(commit.Date);
-          return date.isAfter('2005-01-01') && date.isBefore(moment());
-        })
-        .map(function (commit) {
-          return new commitResource({
-            Date: moment(commit.Date).toDate(),
-            SHA: commit.SHA,
-            Author: commit.Author,
-            Message: commit.Message
-          });
-        })
+        .filter(filterWeirdDates)
+        .map(createResource)
         .value();
 
       updateSelects();
 
       return commits;
-
-      /*$interval(function () {
-        //$scope.commits = _.times(25, generateCommit);
-      }, 2000);*/
-
     })
     .then(function(commits) {
       $scope.commitsByAuthor = commitsByAuthor(commits);
@@ -73,8 +73,10 @@ angular.module('gitStats')
   $scope.$watch('resolution', updateSelects);
 
   function updateSelects() {
-    if(!$scope.commits || !$scope.resolution) { return; }
-    switch($scope.resolution) {
+    if (!$scope.commits || !$scope.resolution)
+      return;
+
+    switch ($scope.resolution) {
       case 'months':
         var timeExtent = d3.extent($scope.commits, function (commit) {
           return moment(commit.Date).year();
