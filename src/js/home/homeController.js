@@ -3,7 +3,7 @@ angular.module('gitStats')
 .controller('HomeController', function($scope, commitResource, moment, $interval) {
 
   function commitsByAuthor(commits) {
-    $scope.commitsByAuthor = _.chain(commits)
+    return _.chain(commits)
       .groupBy(_.property('Author'))
       .map(function(commits, authorName) {
         return { author: authorName, commits: commits.length }
@@ -14,6 +14,21 @@ angular.module('gitStats')
 
 
     return commits;
+  }
+
+  function comitterOfTheMonth(commits) {
+    return _.chain(commits)
+      .groupBy(function(commits) {
+        return moment(commits.Date).format('YYYY-MM')
+      })
+      .map(function(commits, month) {
+        return {
+          month: month,
+          committer: _.first(commitsByAuthor(commits))
+        }
+      })
+      .sortBy('month')
+      .value()
   }
 
   $scope.showTable = true;
@@ -43,7 +58,14 @@ angular.module('gitStats')
       }, 2000);*/
 
     })
-    .then(commitsByAuthor);
+    .then(function(commits) {
+      $scope.commitsByAuthor = commitsByAuthor(commits);
+      return commits
+    })
+    .then(function(commits) {
+      $scope.committerOfMonth = comitterOfTheMonth(commits);
+      return commits
+    });
 
   function generateCommit() {
     return {
