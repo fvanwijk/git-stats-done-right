@@ -84,15 +84,11 @@ d3.custom.barChart = function module() {
         .selectAll('.bar')
         .data(data, function (d) {
 
-          return d.key;
           switch(resolution) {
-            case 'year':
-              console.log(moment(d.key).year(0));
-              return moment(d.key).year(0).month();
-              return moment(d.key).month();
-            case 'month':
-              return moment(d.key).month(0).day();
-              return moment(d.key).day();
+            case 'years':
+              return d.key;
+            case 'months':
+              return moment(d.key).year(1970);
           }
         });
       bars.enter().append('rect')
