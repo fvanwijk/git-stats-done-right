@@ -1,6 +1,36 @@
 angular.module('gitStats')
 
 .controller('HomeController', function($scope, commitResource, moment, $interval) {
+
+  function commitsByAuthor(commits) {
+    return _.chain(commits)
+      .groupBy(_.property('Author'))
+      .map(function(commits, authorName) {
+        return { author: authorName, commits: commits.length }
+      })
+      .sortBy('commits')
+      .reverse()
+      .value();
+
+
+    return commits;
+  }
+
+  function comitterOfTheMonth(commits) {
+    return _.chain(commits)
+      .groupBy(function(commits) {
+        return moment(commits.Date).format('YYYY-MM')
+      })
+      .map(function(commits, month) {
+        return {
+          month: month,
+          committer: _.first(commitsByAuthor(commits))
+        }
+      })
+      .sortBy('month')
+      .value()
+  }
+
   $scope.showTable = true;
   $scope.resolution = 'months';
   $scope.timeDomain = '2014';
@@ -23,10 +53,21 @@ angular.module('gitStats')
         .value();
 
       updateSelects();
+
+      return commits;
+
       /*$interval(function () {
         //$scope.commits = _.times(25, generateCommit);
       }, 2000);*/
 
+    })
+    .then(function(commits) {
+      $scope.commitsByAuthor = commitsByAuthor(commits);
+      return commits
+    })
+    .then(function(commits) {
+      $scope.committerOfMonth = comitterOfTheMonth(commits);
+      return commits
     });
 
   $scope.$watch('resolution', updateSelects);
