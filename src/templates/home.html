@@ -1,5 +1,30 @@
 <div class="container">
 
-    <h1>Hier komt vette shit!</h1>
+  <h1>Commits</h1>
+  <label for="showTable">
+    <input id="showTable" type="checkbox" ng-model="showTable">
+    Tabel tonen
+  </label>
+  <select ng-model="resolution" ng-options="value for value in ['years', 'months', 'days']"></select>
+  <div commits="commits" height="100" resolution="resolution">Test</div>
+  <table ng-if="false" ng-show="showTable" class="table table-condensed">
+    <thead>
+      <tr>
+        <th>SHA</th>
+        <th>Time</th>
+        <th>Message</th>
+        <th>Author</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="commit in commits | limitTo:100">
+        <td>{{ commit.SHA }}</td>
+        <td>{{ commit.Date | date:'dd-MM-yyyy HH:mm' }}</td>
+        <td>{{ commit.Message }}</td>
+        <td>{{ commit.Author }}</td>
+      </tr>
+      <tr ng-show="!commits"><td colspan="3">Nog geen commits...</td></tr>
+    </tbody>
+  </table>
 
 </div>

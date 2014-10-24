@@ -1,23 +1,31 @@
 'use strict';
 
 module.exports = {
-    images: {
-        files: [
-            'src/img/dest/*.*'
-        ],
-        tasks: ['newer:copy:images']
-    },
-    less: {
-        files: [
-            'src/css/**/*.less',
-            'src/components/**/*.less'
-        ],
-        tasks: ['less:devbuild']
-    },
-    htmljs: {
-        files: ['src/index.html','src/js/*.js','src/components/**/*.js'],
-        tasks: ['useminPrepare','copy:build','concat','copy:temptobuild','usemin','newer:jshint:all']
-    },
+  json: {
+    files: ['src/api/*.json'],
+    tasks: ['copy:json']
+  },
+  images: {
+    files: [
+      'src/img/dest/*.*'
+    ],
+    tasks: ['newer:copy:images']
+  },
+  css: {
+    files: ['src/css/**/*.css'],
+    tasks: ['copy:css']
+  },
+  less: {
+    files: [
+      'src/css/**/*.less',
+      'src/components/**/*.less'
+    ],
+    tasks: ['less:devbuild']
+  },
+  htmljs: {
+    files: ['src/index.html', 'src/**/*.{js,html}'],
+    tasks: ['useminPrepare', 'copy:build', 'concat', 'copy:temptobuild', 'usemin', 'newer:jshint:all']
+  },
 //    grunt: {
 //        files: [
 //            'Gruntfile.js',
@@ -25,18 +33,18 @@ module.exports = {
 //        ],
 //        tasks: ['build:dev']
 //    },
-    templates: {
-        files: [
-            'src/components/**/*.html'
-        ],
-        tasks: ['newer:copy:templates']
+  templates: {
+    files: [
+      'src/**/*.html'
+    ],
+    tasks: ['newer:copy:templates']
+  },
+  livereload: {
+    options: {
+      livereload: true
     },
-    livereload: {
-        options: {
-            livereload: true
-        },
-        files: [
-            '.build/**/*.*'
-        ]
-    }
+    files: [
+      '.build/**/*.*'
+    ]
+  }
 };
