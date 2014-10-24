@@ -38,7 +38,7 @@ d3.custom.barChart = function module() {
       var xAxis = d3.svg.axis()
         .scale(x1)
         .orient('bottom')
-        .tickFormat(d3.time.format("%d %b"));
+        .tickFormat(d3.time.format("%B"));
 
       var yAxis = d3.svg.axis()
         .scale(y1)
