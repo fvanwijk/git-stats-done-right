@@ -22,7 +22,7 @@ d3.custom.barChart = function module() {
         xExtent[0],
         d3.time.month.offset(xExtent[1], 1)
       );
-console.log(xExtent);
+
       var x1 = d3.scale.ordinal()
         .domain(xDomain)
         .rangeRoundBands([0, chartW], .1);
@@ -38,7 +38,7 @@ console.log(xExtent);
       var xAxis = d3.svg.axis()
         .scale(x1)
         .orient('bottom')
-        .tickFormat(d3.time.format("%d %b"));;
+        .tickFormat(d3.time.format("%d %b"));
 
       var yAxis = d3.svg.axis()
         .scale(y1)
@@ -82,7 +82,19 @@ console.log(xExtent);
       var barW = x1.rangeBand() - gapSize;
       var bars = svg.select('.chart-group')
         .selectAll('.bar')
-        .data(data, function (d) { return d.key; });
+        .data(data, function (d) {
+
+          return d.key;
+          switch(resolution) {
+            case 'year':
+              console.log(moment(d.key).year(0));
+              return moment(d.key).year(0).month();
+              return moment(d.key).month();
+            case 'month':
+              return moment(d.key).month(0).day();
+              return moment(d.key).day();
+          }
+        });
       bars.enter().append('rect')
         .classed('bar', true)
         .attr({

@@ -1,12 +1,26 @@
 <div class="container">
 
   <h1>Commits</h1>
-  <label for="showTable">
+  <label for="showTable" ng-if="false">
     <input id="showTable" type="checkbox" ng-model="showTable">
     Tabel tonen
   </label>
-  <select ng-model="resolution" ng-options="value for value in ['years', 'months', 'days']"></select>
-  <div commits="commits" height="100" resolution="resolution">Test</div>
+
+  <div class="row">
+    <div class="col-md-3">
+      <label>Resolution</label>
+      <select class="form-control" ng-model="resolution" ng-options="value for value in ['years', 'months', 'days']"></select>
+
+      <label for="show">Show</label>
+      <select class="form-control" id="show" ng-model="timeDomain" ng-options="value for value in timeDomains"></select>
+    </div>
+    <div class="col-md-9">
+
+    </div>
+  </div>
+
+  <div commits="commits" height="100" resolution="resolution" time-domain="timeDomain"></div>
+
   <table ng-if="false" ng-show="showTable" class="table table-condensed">
     <thead>
       <tr>

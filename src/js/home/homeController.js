@@ -3,6 +3,7 @@ angular.module('gitStats')
 .controller('HomeController', function($scope, commitResource, moment, $interval) {
   $scope.showTable = true;
   $scope.resolution = 'months';
+  $scope.timeDomain = '2014';
 
   commitResource.query().$promise
     .then(function (commits) {
@@ -21,11 +22,34 @@ angular.module('gitStats')
         })
         .value();
 
+      updateSelects();
       /*$interval(function () {
         //$scope.commits = _.times(25, generateCommit);
       }, 2000);*/
 
     });
+
+  $scope.$watch('resolution', updateSelects);
+
+  function updateSelects() {
+    if(!$scope.commits || !$scope.resolution) { return; }
+    switch($scope.resolution) {
+      case 'months':
+        var timeExtent = d3.extent($scope.commits, function (commit) {
+          return moment(commit.Date).year();
+        });
+        break;
+      case 'days':
+        var timeExtent = d3.extent($scope.commits, function (commit) {
+          return moment(commit.Date).month();
+        });
+        break;
+    }
+
+    var domain = _.range(timeExtent[0], timeExtent[1]+1);
+    $scope.timeDomains = domain;
+    $scope.timeDomain = _.last(domain);
+  }
 
   function generateCommit() {
     return {
@@ -36,7 +60,7 @@ angular.module('gitStats')
     }
   }
 
-    function randomDate(start, end) {
-      return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    }
+  function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
 });
